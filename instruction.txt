@@ -1,0 +1,10 @@
+1. Introduction
+The Restaurant Management System is a web-based platform designed to handle daily restaurant operations. It has three main interfaces:
+Customer View – For guests to browse the menu and place orders.
+
+
+Admin / Counter View – For staff to manage menu items, check revenue, and monitor inventory.
+
+
+Kitchen View – For kitchen staff to receive and fulfill customer orders.
+
