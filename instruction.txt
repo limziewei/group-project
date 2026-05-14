@@ -8,3 +8,89 @@ Admin / Counter View – For staff to manage menu items, check revenue, and moni
 
 Kitchen View – For kitchen staff to receive and fulfill customer orders.
 
+3. Customer View
+Purpose: Allow customers to browse, select, and order food.
+Step 3.1: Browse the Menu
+Open the Customer Page.
+
+
+View all available menu items with their:
+Name, Description, and Price.
+
+Step 3.2: Add Items to Cart
+Enter the Quantity for the chosen item.
+
+
+(Optional) Enter Remarks such as “No onions”.
+
+
+Click Add to Cart.
+
+
+The selected item is added to the customer’s shopping cart.
+
+
+Step 3.3: Review Cart & Checkout
+Click View Cart.
+
+
+Review the order details in a table format:
+
+
+Item | Price | Quantity | Remark | Line Total
+
+
+Confirm the Total Price shown at the bottom.
+
+
+Enter the Table Number (required for dine-in).
+
+
+Choose an action:
+
+
+Back to Menu – to add more items.
+
+
+Proceed to Checkout – to finalize order.
+
+
+Once confirmed, the order is sent directly to the Kitchen Dashboard.
+
+
+
+
+4. Kitchen Staff Dashboard
+Purpose: Enable kitchen staff to see, prepare, and complete customer orders.
+Step 4.1: Read an Order Ticket
+Each new order appears as a ticket card.
+
+
+Information displayed:
+
+
+Order ID – unique number.
+
+
+Table Number – dining table (or blank for takeaway).
+
+
+Total Price – full order cost.
+
+
+Order Items – list of dishes with details:
+Step 4.2: Process an Order
+Start preparing items as soon as a new ticket appears.
+
+
+Once the order is complete and delivered:
+
+
+Click the Delete button on the ticket.
+
+
+This removes the order from the queue and marks it as completed.
+
+
+
+build me customer view.php customer page function-> how to ask question
