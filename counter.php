@@ -16,8 +16,8 @@ function table_exists(mysqli $conn, string $table_name): bool {
     return $result && mysqli_num_rows($result) > 0;
 }
 
-$has_orders_table = table_exists($conn, 'orders');
-$has_order_items_table = table_exists($conn, 'order_items');
+$has_orders_table = table_exists($conn, 'admin_orders');
+$has_order_items_table = table_exists($conn, 'admin_order_items');
 
 // Toggle menu item availability
 if (isset($_POST['toggle_availability'])) {
@@ -25,7 +25,7 @@ if (isset($_POST['toggle_availability'])) {
     $current_status = intval($_POST['current_status']);
     $new_status = $current_status ? 0 : 1;
     
-    $stmt = $conn->prepare("UPDATE menu SET available = ? WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE admin_menu SET available = ? WHERE id = ?");
     $stmt->bind_param("ii", $new_status, $menu_id);
     if ($stmt->execute()) {
         $_SESSION['msg'] = 'Availability updated!';
@@ -40,7 +40,7 @@ if ($has_orders_table && isset($_POST['update_order_status'])) {
     $order_id = intval($_POST['order_id']);
     $new_status = $_POST['order_status'];
     
-    $stmt = $conn->prepare("UPDATE orders SET status = ? WHERE id = ?");
+    $stmt = $conn->prepare("UPDATE admin_orders SET status = ? WHERE id = ?");
     $stmt->bind_param("si", $new_status, $order_id);
     if ($stmt->execute()) {
         $_SESSION['msg'] = 'Order status updated!';
@@ -51,13 +51,13 @@ if ($has_orders_table && isset($_POST['update_order_status'])) {
 }
 
 // Get menu items
-$sql = "SELECT * FROM menu ORDER BY category, item_name";
+$sql = "SELECT * FROM admin_menu ORDER BY category, item_name";
 $result = mysqli_query($conn, $sql);
 $menu_items = mysqli_fetch_all($result, MYSQLI_ASSOC) ?? [];
 
 // Get orders
 if ($has_orders_table) {
-    $sql = "SELECT * FROM orders ORDER BY created_at DESC";
+    $sql = "SELECT * FROM admin_orders ORDER BY created_at DESC";
     $result = mysqli_query($conn, $sql);
     $orders = mysqli_fetch_all($result, MYSQLI_ASSOC) ?? [];
 
@@ -67,7 +67,7 @@ if ($has_orders_table) {
         COUNT(*) as total_orders,
         SUM(total_amount) as total_revenue,
         AVG(total_amount) as avg_order
-    FROM orders 
+    FROM admin_orders 
     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     GROUP BY DATE(created_at)
     ORDER BY order_date DESC";
@@ -78,13 +78,13 @@ if ($has_orders_table) {
     $sql = "SELECT 
         COUNT(*) as total_orders,
         SUM(total_amount) as total_revenue
-    FROM orders 
+    FROM admin_orders 
     WHERE DATE(created_at) = CURDATE()";
     $result = mysqli_query($conn, $sql);
     $today_stats = mysqli_fetch_assoc($result);
 
     // Get total revenue
-    $sql = "SELECT SUM(total_amount) as total_revenue FROM orders";
+    $sql = "SELECT SUM(total_amount) as total_revenue FROM admin_orders";
     $result = mysqli_query($conn, $sql);
     $revenue_stats = mysqli_fetch_assoc($result);
 } else {
@@ -96,8 +96,8 @@ if ($has_orders_table) {
 
 // Get order items for a specific order
 function get_order_items($conn, $order_id) {
-    $stmt = $conn->prepare("SELECT oi.*, m.item_name FROM order_items oi 
-                            JOIN menu m ON oi.menu_id = m.id 
+    $stmt = $conn->prepare("SELECT oi.*, m.item_name FROM admin_order_items oi 
+                            JOIN admin_menu m ON oi.menu_id = m.id 
                             WHERE oi.order_id = ?");
     $stmt->bind_param("i", $order_id);
     $stmt->execute();
@@ -429,7 +429,7 @@ unset($_SESSION['msg']);
 
         <?php if (!$has_orders_table || !$has_order_items_table): ?>
             <div class="message error">
-                Order tables are missing from the database. Run <strong>restuarant.sql</strong> to create <strong>orders</strong> and <strong>order_items</strong>.
+                Order tables are missing from the database. Run <strong>restuarant.sql</strong> to create <strong>admin_orders</strong> and <strong>admin_order_items</strong>, or run <strong>rename_tables.sql</strong> to migrate existing tables.
             </div>
         <?php endif; ?>
 

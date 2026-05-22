@@ -9,11 +9,12 @@ require_role(['admin']);
 $conn = connect_database();
 
 $current_user = current_user();
+$is_admin = ($current_user['role'] ?? '') === 'admin' ? 1 : 0;
 
 
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
-    $stmt = $conn->prepare("DELETE FROM menu WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM admin_menu WHERE id = ?");
     $stmt->bind_param("i", $id);
     if ($stmt->execute()) {
         header('Location: admin.php?msg=deleted');
@@ -29,7 +30,7 @@ $edit_data = null;
 
 if (isset($_GET['edit'])) {
     $edit_id = intval($_GET['edit']);
-    $stmt = $conn->prepare("SELECT * FROM menu WHERE id = ?");
+    $stmt = $conn->prepare("SELECT * FROM admin_menu WHERE id = ?");
     $stmt->bind_param("i", $edit_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -44,17 +45,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $category = $_POST['category'] ?? '';
     $image_url = $_POST['image_url'] ?? '';
     $available = isset($_POST['available']) ? 1 : 0;
+    $admin = $is_admin;
 
     if (isset($_POST['update_id']) && !empty($_POST['update_id'])) {
         // Update existing item
         $update_id = intval($_POST['update_id']);
-        $stmt = $conn->prepare("UPDATE menu SET item_name=?, description=?, price=?, category=?, image_url=?, available=? WHERE id=?");
-        $stmt->bind_param("ssdssii", $item_name, $description, $price, $category, $image_url, $available, $update_id);
+        $stmt = $conn->prepare("UPDATE admin_menu SET item_name=?, description=?, price=?, category=?, image_url=?, available=?, admin=? WHERE id=?");
+        $stmt->bind_param("ssdssiii", $item_name, $description, $price, $category, $image_url, $available, $admin, $update_id);
         $msg = "updated";
     } else {
         // Add new item
-        $stmt = $conn->prepare("INSERT INTO menu (item_name, description, price, category, image_url, available) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssdssi", $item_name, $description, $price, $category, $image_url, $available);
+        $stmt = $conn->prepare("INSERT INTO admin_menu (item_name, description, price, category, image_url, available, admin) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssdssii", $item_name, $description, $price, $category, $image_url, $available, $admin);
         $msg = "added";
     }
 
@@ -66,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     $stmt->close();
 }
-$sql = "SELECT * FROM menu ORDER BY id DESC";
+$sql = "SELECT * FROM admin_menu ORDER BY id DESC";
 $result = mysqli_query($conn, $sql);
 $menu_items = mysqli_fetch_all($result, MYSQLI_ASSOC) ?? [];
 ?>

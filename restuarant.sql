@@ -2,8 +2,7 @@ CREATE DATABASE restaurant;
 
 USE restaurant;
 
--- Menu Items Table
-CREATE TABLE menu_items (
+CREATE TABLE admin_menu (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     description TEXT,
@@ -14,8 +13,7 @@ CREATE TABLE menu_items (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Orders Table
-CREATE TABLE orders (
+CREATE TABLE admin_orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     table_number INT NOT NULL,
     total_price DECIMAL(10, 2) NOT NULL,
@@ -27,19 +25,15 @@ CREATE TABLE orders (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Order Items Table (linking orders to menu items)
-CREATE TABLE order_items (
+CREATE TABLE admin_order_items (
     id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT NOT NULL,
-    item_id INT NOT NULL,
-    quantity INT NOT NULL,
-    line_total DECIMAL(10, 2) NOT NULL,
-    remarks TEXT,
-    status ENUM('pending', 'preparing', 'completed') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-    FOREIGN KEY (item_id) REFERENCES menu_items(id)
+    menu_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    item_price DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    special_instructions TEXT,
+    FOREIGN KEY (order_id) REFERENCES admin_orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (menu_id) REFERENCES admin_menu(id)
 );
 
 -- Sample Menu Items
